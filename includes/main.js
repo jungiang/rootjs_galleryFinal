@@ -20,11 +20,13 @@ var pictures = [
 	'images/pretty.jpg',
 ];
 
-
 function initiateApp(){
 	/*advanced: add jquery sortable call here to make the gallery able to be sorted
 		//on change, rebuild the images array into the new order
 	*/
+	$('section').addClass('sortable');
+	$('.sortable').sortable();
+
 	makeGallery(pictures);
 	addModalCloseHandler();
 	displayImage();
@@ -45,9 +47,8 @@ function addModalCloseHandler(){
 	//add a click handler to the img element in the image modal.  When the element is clicked, close the modal
 	//for more info, check here: https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp
 	$('.modal-body > img').click(function(){
-		$(this).modal('hide');
+		$('#galleryModal').modal('hide');
 	});
-//NOT WORKING
 }
 
 function displayImage(){
@@ -61,13 +62,23 @@ function displayImage(){
 	//change the src of the image in the modal to the url of the image that was clicked on
 	//show the modal with JS.  Check for more info here: 
 	//https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp
-
 	$('.imageGallery').click(function(){
-		imageSource = $(this).attr('style');
-		imageSource = imageSource.replace('background-image:url(', '');
-		imageSource = imageSource.replace(');', '');
-		imageName = imageSource.replace('images/', '');
-		imageName = imageName.replace('.jpg', '');
+		var imageSource = $(this).attr('style');
+		var stringPosition = imageSource.lastIndexOf('images');
+
+		if(stringPosition !== 21){
+			imageSource = $(this).attr('style');
+			imageSource = imageSource.replace('background-image: url("', '');
+			imageSource = imageSource.replace('"); position: relative; left: 0px; top: 0px;', '');
+			imageName = imageSource.replace('images/', '');
+			imageName = imageName.replace('.jpg', '');	
+		}else{
+			imageSource = $(this).attr('style');
+			imageSource = imageSource.replace('background-image:url(', '');
+			imageSource = imageSource.replace(');', '');
+			imageName = imageSource.replace('images/', '');
+			imageName = imageName.replace('.jpg', '');	
+		}
 		$('.modal-title').text(imageName);
 		$('.modal-body > img').attr('src', imageSource);
 		$('#galleryModal').modal();
