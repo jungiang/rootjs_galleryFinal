@@ -2,7 +2,6 @@
 
 $(document).ready(initiateApp);
 
-
 var pictures = [
 	'images/landscape-1.jpg',
 	'images/landscape-10.jpg',
@@ -29,18 +28,20 @@ function initiateApp(){
 
 	makeGallery(pictures);
 	addModalCloseHandler();
-	displayImage();
 }
+
 function makeGallery(imageArray){
 	//use loops and jquery dom creation to make the html structure inside the #gallery section
-
 	//create a loop to go through the pictures
+	for(i = 0; i < imageArray.length; i++){
+		var newFigure = $('<figure>').addClass('imageGallery col-xs-12 col-sm-6 col-md-4').css('background-image', 'url("' + imageArray[i] + '")').click(displayImage);
+		var newFigCap = $('<figcaption>').text(imageArray[i].replace('images/', ''));
+		$('#gallery').append(newFigure);
+		newFigure.append(newFigCap);
+	}
 		//create the elements needed for each picture, store the elements in variable
-
 		//attach a click handler to the figure you create.  call the "displayImage" function.  
-
 		//append the element to the #gallery section
-
 }
 
 function addModalCloseHandler(){
@@ -62,25 +63,12 @@ function displayImage(){
 	//change the src of the image in the modal to the url of the image that was clicked on
 	//show the modal with JS.  Check for more info here: 
 	//https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp
-	$('.imageGallery').click(function(){
-		var imageSource = $(this).attr('style');
-		var stringPosition = imageSource.lastIndexOf('images');
-
-		if(stringPosition !== 21){
-			imageSource = $(this).attr('style');
-			imageSource = imageSource.replace('background-image: url("', '');
-			imageSource = imageSource.replace('"); position: relative; left: 0px; top: 0px;', '');
-			imageName = imageSource.replace('images/', '');
-			imageName = imageName.replace('.jpg', '');	
-		}else{
-			imageSource = $(this).attr('style');
-			imageSource = imageSource.replace('background-image:url(', '');
-			imageSource = imageSource.replace(');', '');
-			imageName = imageSource.replace('images/', '');
-			imageName = imageName.replace('.jpg', '');	
-		}
+		var imageStyle = $(this).css('background-image');
+		var quotePosition = imageStyle.lastIndexOf('"') - imageStyle.lastIndexOf('images');
+		var imageSource = imageStyle.substr(imageStyle.lastIndexOf('images'), quotePosition);
+		var periodPosition = imageSource.lastIndexOf('.') - (imageSource.lastIndexOf('/')+1);
+		var imageName = imageSource.substr(imageSource.lastIndexOf('/')+1, periodPosition);
 		$('.modal-title').text(imageName);
 		$('.modal-body > img').attr('src', imageSource);
 		$('#galleryModal').modal();
-	});
 }
